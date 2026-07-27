@@ -916,7 +916,7 @@ section { padding: 80px 0; }
             <div class="pulse-dot"></div>
             LIVE RIGHT NOW
           </div>
-          <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="btn btn-outline">View Repository →</a>
+          <a href="https://github.com/yasaswinpalukuri/Groot-Agent-System" target="_blank" rel="noopener" class="btn btn-outline">View Repository →</a>
         </div>
         <div class="groot-body">
           <div class="arch">
@@ -1002,6 +1002,82 @@ section { padding: 80px 0; }
 </section>
 
 <!-- ============ PROJECTS ============ -->
+
+    <!-- BUILD LOG TIMELINE -->
+    <section id="timeline" style="padding: 80px 0;">
+      <div class="container">
+        <p class="section-label">// BUILD LOG</p>
+        <h2 style="font-size: clamp(28px, 5vw, 40px); font-weight: 700; color: var(--text); margin: 0 0 12px;">How Groot Was Built</h2>
+        <p style="color: var(--muted); font-size: 15px; line-height: 1.7; margin: 0 0 48px; max-width: 600px;">From a blank Ubuntu install to a fully autonomous 6-agent AI system. Every milestone is real.</p>
+        <div style="position: relative; padding-left: 24px;">
+          <div style="position: absolute; left: 0; top: 8px; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--secondary), transparent);"></div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 8px var(--secondary);"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--secondary);">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--secondary); letter-spacing: 0.08em;">FEB 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Conception and Planning</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">Selected Lenovo M720Q (i5-8500T, 16GB). Researched LangGraph, Ollama, ChromaDB. Decided on local-first, zero cloud AI dependency.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--secondary); box-shadow: 0 0 8px var(--secondary);"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--secondary);">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--secondary); letter-spacing: 0.08em;">FEB 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Bare Metal Foundation</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">Ubuntu 22.04.5 LTS bare metal. LUKS full-disk encryption. WiFi driver (RTL8852BU). Tailscale VPN. First Ollama model running.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--primary);">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--primary); letter-spacing: 0.08em;">MAR 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">First Agent Loop</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">FastAPI agent service. Groot supervisor routing to qwen2.5:7b. ChromaDB setup with 6 collections. Basic RAG pipeline working end-to-end.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 8px var(--primary);"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--primary);">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--primary); letter-spacing: 0.08em;">APR 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Hybrid RAG and Load Scheduler</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">Custom asyncio priority queue with RAM headroom validation. Hybrid RAG: BM25(40%) plus Dense(60%). Real retrieval quality improvement measured.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #D29922; box-shadow: 0 0 8px #D29922;"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid #D29922;">
+              <span style="font-family: var(--mono); font-size: 11px; color: #D29922; letter-spacing: 0.08em;">MAY 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Job Search Pipeline</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">Adzuna Canada API. ATS-optimized resume tailoring. PDF generation via reportlab. Telegram delivery in under 60 seconds.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 32px;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: #D29922; box-shadow: 0 0 8px #D29922;"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid #D29922;">
+              <span style="font-family: var(--mono); font-size: 11px; color: #D29922; letter-spacing: 0.08em;">JUN 2026</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Security and Evaluation</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">guardrails-ai: PII detection, prompt injection blocking, toxic content filter. Ragas evaluation: Faithfulness 1.000. 20-test red-teaming framework.</p>
+            </div>
+          </div>
+
+          <div class="reveal" style="position: relative; margin-bottom: 0;">
+            <div style="position: absolute; left: -29px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green);"></div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--green);">
+              <span style="font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.08em;">JUL 2026 · NOW</span>
+              <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Full Autonomous Operation</h3>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">6 agents live. 7 models, 27GB. n8n workflows. Notion nightly diary. React dashboard with 12 pages. Supervisor loop runs hourly. 4,190+ hours and counting.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
 <section id="projects">
   <div class="container">
     <div class="reveal">
@@ -1010,7 +1086,7 @@ section { padding: 80px 0; }
       <p class="section-sub">Production-minded projects — tested, evaluated, and mostly still running.</p>
     </div>
     <div class="projects-grid">
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card featured reveal">
+      <a href="https://github.com/yasaswinpalukuri/Groot-Agent-System" target="_blank" rel="noopener" class="project-card featured reveal">
         <div class="project-top">
           <span class="status-badge status-live">LIVE</span>
           <span class="project-link">↗</span>
@@ -1026,7 +1102,7 @@ section { padding: 80px 0; }
           <span class="stack-pill">n8n</span>
         </div>
       </a>
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card reveal" data-delay="1">
+      <a href="https://github.com/yasaswinpalukuri/Multi-Turn-Conversational-Data-Assistant" target="_blank" rel="noopener" class="project-card reveal" data-delay="1">
         <div class="project-top">
           <span class="status-badge status-complete">COMPLETE</span>
           <span class="project-link">↗</span>
@@ -1039,7 +1115,7 @@ section { padding: 80px 0; }
           <span class="stack-pill">CI/CD</span>
         </div>
       </a>
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card reveal" data-delay="1">
+      <a href="https://github.com/yasaswinpalukuri/LLM-Powered-Resume-Screener" target="_blank" rel="noopener" class="project-card reveal" data-delay="1">
         <div class="project-top">
           <span class="status-badge status-complete">COMPLETE</span>
           <span class="project-link">↗</span>
@@ -1052,7 +1128,7 @@ section { padding: 80px 0; }
           <span class="stack-pill">Ollama</span>
         </div>
       </a>
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card reveal" data-delay="2">
+      <a href="https://github.com/yasaswinpalukuri/Groot-Agent-System" target="_blank" rel="noopener" class="project-card reveal" data-delay="2">
         <div class="project-top">
           <span class="status-badge status-complete">COMPLETE</span>
           <span class="project-link">↗</span>
@@ -1065,7 +1141,7 @@ section { padding: 80px 0; }
           <span class="stack-pill">guardrails-ai</span>
         </div>
       </a>
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card reveal" data-delay="2">
+      <a href="https://github.com/yasaswinpalukuri/Groot-Agent-System" target="_blank" rel="noopener" class="project-card reveal" data-delay="2">
         <div class="project-top">
           <span class="status-badge status-complete">COMPLETE</span>
           <span class="project-link">↗</span>
@@ -1078,7 +1154,7 @@ section { padding: 80px 0; }
           <span class="stack-pill">Python</span>
         </div>
       </a>
-      <a href="https://github.com/yasaswinpalukuri" target="_blank" rel="noopener" class="project-card reveal" data-delay="3">
+      <a href="https://github.com/yasaswinpalukuri/Structured-Data-Extractor" target="_blank" rel="noopener" class="project-card reveal" data-delay="3">
         <div class="project-top">
           <span class="status-badge status-building">BUILDING</span>
           <span class="project-link">↗</span>
