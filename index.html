@@ -1442,6 +1442,29 @@ section { padding: 80px 0; }
     });
   });
 })();
+
+  /* ---- Easter egg: type "groot" anywhere ---- */
+  var _eggBuffer = '';
+  document.addEventListener('keydown', function (e) {
+    if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      _eggBuffer = (_eggBuffer + e.key.toLowerCase()).slice(-5);
+      if (_eggBuffer === 'groot') {
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(13,17,23,0.85);backdrop-filter:blur(8px);';
+        overlay.innerHTML = '<div style="font-family:JetBrains Mono,monospace;background:#161B22;border:1px solid #30363D;border-radius:12px;padding:32px 40px;max-width:420px;width:90%;box-shadow:0 24px 70px rgba(0,0,0,0.6)"><div style="display:flex;gap:8px;margin-bottom:16px"><span style="width:12px;height:12px;border-radius:50%;background:#FF5F57;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#FEBC2E;display:inline-block"></span><span style="width:12px;height:12px;border-radius:50%;background:#28C840;display:inline-block"></span></div><div style="color:#58A6FF;margin-bottom:8px">$ groot --secret</div><div style="color:#3FB950;font-size:20px;margin-bottom:8px">I am Groot. 🌱</div><div style="color:#8B949E;font-size:12px">Running 24/7 on bare metal in Toronto.<br>You found the easter egg. Press ESC to close.</div></div>';
+        document.body.appendChild(overlay);
+        overlay.addEventListener('click', function() { document.body.removeChild(overlay); });
+        document.addEventListener('keydown', function esc(e) {
+          if (e.key === 'Escape') {
+            if (document.body.contains(overlay)) document.body.removeChild(overlay);
+            document.removeEventListener('keydown', esc);
+          }
+        });
+        _eggBuffer = '';
+      }
+    }
+  });
+
 </script>
 </body>
 </html>
