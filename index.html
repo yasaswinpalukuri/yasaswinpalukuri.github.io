@@ -1110,10 +1110,10 @@ section { padding: 80px 0; }
         <div class="terminal-body">
           <div class="term-line"><span class="term-prompt">$</span> groot status</div>
           <div class="term-line"><span class="term-check">✓</span> <span class="term-val">6 agents running</span></div>
-          <div class="term-line"><span class="term-check">✓</span> <span class="term-val">7 models loaded (27GB)</span></div>
-          <div class="term-line"><span class="term-check">✓</span> <span class="term-val">6 ChromaDB collections</span></div>
+          <div class="term-line"><span class="term-check">✓</span> <span class="term-val"><span data-groot="models">7</span> models loaded (<span data-groot="models-gb">27</span>GB)</span></div>
+          <div class="term-line"><span class="term-check">✓</span> <span class="term-val"><span data-groot="collections">6</span> ChromaDB collections</span></div>
           <div class="term-line"><span class="term-check">✓</span> <span class="term-val">Ragas faithfulness: 1.000</span></div>
-          <div class="term-line"><span class="term-check">✓</span> <span class="term-val">Uptime: 6149 hours</span></div>
+          <div class="term-line"><span class="term-check">✓</span> <span class="term-val">Uptime: <span data-groot="runtime">6149</span> hours</span></div>
           <div class="term-line"><span class="term-prompt">$</span> <span class="term-cursor"></span></div>
         </div>
       </div>
@@ -1179,12 +1179,12 @@ section { padding: 80px 0; }
           </div>
           <div>
             <div class="stats-grid">
-              <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Ollama Models</div></div>
-              <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">ChromaDB Collections</div></div>
+              <div class="stat-card"><div class="stat-value"><span data-groot="models">7</span></div><div class="stat-label">Ollama Models</div></div>
+              <div class="stat-card"><div class="stat-value"><span data-groot="collections">6</span></div><div class="stat-label">ChromaDB Collections</div></div>
               <div class="stat-card"><div class="stat-value">1.000</div><div class="stat-label">Faithfulness Score</div></div>
               <div class="stat-card"><div class="stat-value">24/7</div><div class="stat-label">Uptime</div></div>
               <div class="stat-card"><div class="stat-value">6</div><div class="stat-label">Active Agents</div></div>
-              <div class="stat-card"><div class="stat-value">6149<span style="font-size:0.55em;">hrs</span></div><div class="stat-label">Running</div></div>
+              <div class="stat-card"><div class="stat-value"><span data-groot="runtime">6149</span><span style="font-size:0.55em;">hrs</span></div><div class="stat-label">Running</div></div>
             </div>
           </div>
         </div>
@@ -1294,7 +1294,7 @@ section { padding: 80px 0; }
             <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; border-left: 3px solid var(--green);">
               <span style="font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.08em;">JUL 2026 · NOW</span>
               <h3 style="font-size: 15px; font-weight: 600; color: var(--text); margin: 4px 0 6px;">Full Autonomous Operation</h3>
-              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">6 agents live. 7 models, 27GB. n8n workflows. Notion nightly diary. React dashboard with 12 pages. Supervisor loop runs hourly. 4,190+ hours and counting.</p>
+              <p style="color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0;">6 agents live. <span data-groot="models">7</span> models, <span data-groot="models-gb">27</span>GB. n8n workflows. Notion nightly diary. React dashboard with 12 pages. Supervisor loop runs hourly. 4,190+ hours and counting.</p>
             </div>
           </div>
         </div>
@@ -1360,7 +1360,7 @@ section { padding: 80px 0; }
         <div class="project-metrics">
           <div><span class="pm-v">1.000</span><span class="pm-l">Ragas faithfulness</span></div>
           <div><span class="pm-v">0.84</span><span class="pm-l">Ragas overall</span></div>
-          <div><span class="pm-v">7</span><span class="pm-l">models · 27GB</span></div>
+          <div><span class="pm-v" data-groot="models">7</span><span class="pm-l">models · <span data-groot="models-gb">27</span>GB</span></div>
           <div><span class="pm-v">24/7</span><span class="pm-l">on bare metal</span></div>
         </div>
         <p class="project-hint">Four Docker services under systemd · React dashboard · Slack, Telegram and n8n as front doors · <span class="accent">full case study on the site</span></p>
@@ -1778,7 +1778,7 @@ section { padding: 80px 0; }
   <div class="container">
     <p class="footer-sig">
       Built by <span class="primary">Yasaswin Palukuri</span> · Powered by <span class="green">Groot OS</span><br>
-      Running on a Lenovo M720Q in Toronto, Canada <span class="footer-heart">●</span> <span class="green">uptime 6149h and counting</span>
+      Running on a Lenovo M720Q in Toronto, Canada <span class="footer-heart">●</span> <span class="green">uptime <span data-groot="runtime">6149</span>h and counting</span>
     </p>
   </div>
 </footer>
