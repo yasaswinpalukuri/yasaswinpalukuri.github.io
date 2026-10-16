@@ -171,6 +171,33 @@ a { color: inherit; text-decoration: none; }
 .stat-card:nth-child(3) .stat-value { color: var(--green); }
 .stat-card:nth-child(5) .stat-value { color: var(--secondary); }
 
+/* ===== CHANGELOG ===== */
+.changelog { margin: 8px 0 48px; }
+.cl-head { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+.cl-sub { color: var(--muted); font-size: 14px; margin-bottom: 26px; }
+.cl-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  transition: border-color 0.25s;
+}
+.cl-item:hover { border-color: rgba(88, 166, 255, 0.4); }
+.cl-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.cl-date { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.cl-scope {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 100px;
+  color: var(--secondary); background: rgba(188, 140, 255, 0.12);
+  border: 1px solid rgba(188, 140, 255, 0.3);
+}
+.cl-scope[data-scope="groot"] { color: var(--green); background: rgba(63, 185, 80, 0.12); border-color: rgba(63, 185, 80, 0.3); }
+.cl-scope[data-scope="infra"] { color: var(--primary); background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.3); }
+.cl-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; flex: 1 1 auto; min-width: 200px; }
+.cl-row { font-size: 13.5px; color: var(--muted); margin-top: 7px; line-height: 1.65; }
+.cl-row b { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 8px; }
+
 .last-updated {
   text-align: center;
   font-family: var(--mono);
@@ -236,9 +263,16 @@ a { color: inherit; text-decoration: none; }
     <div class="stat-card"><div class="stat-value" id="stModels">–</div><div class="stat-label">Models Loaded</div></div>
     <div class="stat-card"><div class="stat-value" id="stFaith">–</div><div class="stat-label">Ragas Faithfulness</div></div>
     <div class="stat-card"><div class="stat-value" id="stCollections">–</div><div class="stat-label">ChromaDB Collections</div></div>
-    <div class="stat-card"><div class="stat-value" id="stUptime">–</div><div class="stat-label">Uptime</div></div>
+    <div class="stat-card"><div class="stat-value" id="stRuntime">–</div><div class="stat-label">Total runtime · since Feb 2026</div></div>
+    <div class="stat-card"><div class="stat-value" id="stSession">–</div><div class="stat-label">Since last upgrade</div></div>
     <div class="stat-card"><div class="stat-value" id="stMem">–</div><div class="stat-label">Memory In Use</div></div>
   </div>
+
+  <section class="changelog" id="changelog" hidden>
+    <h2 class="cl-head">What changed recently</h2>
+    <p class="cl-sub">Groot restarts because it gets upgraded. Here is what each restart bought.</p>
+    <div id="clList"></div>
+  </section>
 
   <p class="last-updated" id="lastUpdated"></p>
 </main>
@@ -257,14 +291,20 @@ a { color: inherit; text-decoration: none; }
   'use strict';
 
   /* ================= CONFIG =================
-     Set STATUS_ENDPOINT to the public URL of the status API running on the
-     M720Q (see groot-status-api.py — expose it with Tailscale Funnel or a
-     Cloudflare Tunnel). While it is empty, the page shows the last-known
-     snapshot below and is honest about being offline. Keep GROOT_EPOCH in
-     sync with the one in index.html. */
-  var STATUS_ENDPOINT = 'https://groot.tailc6acbd.ts.net/status';            // e.g. 'https://groot.your-tailnet.ts.net/status'
+     STATUS_ENDPOINT is the public URL of the status API running on the M720Q
+     (see groot-status-api.py — exposed with Tailscale Funnel). While it is
+     empty or unreachable, the page falls back to the snapshot below and says
+     so plainly.
+
+     Two different numbers, deliberately kept apart:
+       - Total runtime  : wall-clock since RUNTIME_START. Groot has restarted
+                          in that window, so this is NOT uptime.
+       - Current session: hours since the machine last booted, read live from
+                          the API (`uptime_hours`). Resets on every reboot.
+     RUNTIME_START must match the start date used by the stats-sync job. */
+  var STATUS_ENDPOINT = 'https://groot.tailc6acbd.ts.net/status';
   var POLL_MS = 30000;
-  var GROOT_EPOCH = new Date('2026-06-21T09:00:00-04:00');
+  var RUNTIME_START = new Date('2026-02-02T00:00:00-05:00');
 
   /* Last-known snapshot, used when the endpoint is unreachable or not yet
      configured. Update occasionally so the fallback stays truthful. */
@@ -282,14 +322,20 @@ a { color: inherit; text-decoration: none; }
   var termBody = $('termBody');
   var live = false;
 
-  function uptimeHours() {
-    return Math.max(0, Math.floor((Date.now() - GROOT_EPOCH.getTime()) / 3600000));
+  /* Total runtime is computed locally, so it stays correct even when the
+     box is unreachable. */
+  function totalRuntimeHours() {
+    return Math.max(0, Math.floor((Date.now() - RUNTIME_START.getTime()) / 3600000));
   }
 
-  function fmtUptime() {
-    var h = uptimeHours();
+  function fmtHours(h) {
+    if (h == null || isNaN(h)) return null;
     var d = Math.floor(h / 24);
     return d > 0 ? d + 'd ' + (h % 24) + 'h' : h + 'h';
+  }
+
+  function withUnits(s) {
+    return s == null ? '–' : s.replace(/([dh])/g, '<span class="unit">$1</span>');
   }
 
   function setBadge(state, text) {
@@ -302,7 +348,7 @@ a { color: inherit; text-decoration: none; }
     $('stModels').textContent = data.models_loaded != null ? data.models_loaded : '–';
     $('stFaith').textContent = data.faithfulness != null ? data.faithfulness : '–';
     $('stCollections').textContent = data.collections != null ? data.collections : '–';
-    $('stUptime').innerHTML = fmtUptime().replace(/([dh])/g, '<span class="unit">$1</span>');
+    $('stRuntime').innerHTML = withUnits(fmtHours(totalRuntimeHours()));
     $('stMem').textContent = data.memory_used_gb != null ? data.memory_used_gb + 'GB' : '–';
   }
 
@@ -320,7 +366,13 @@ a { color: inherit; text-decoration: none; }
     termBody.appendChild(line(mark + ' <span class="term-val">' + data.models_loaded + ' models loaded (' + data.models_disk_gb + 'GB)</span>'));
     termBody.appendChild(line(mark + ' <span class="term-val">' + data.collections + ' ChromaDB collections</span>'));
     termBody.appendChild(line(mark + ' <span class="term-val">Ragas faithfulness: ' + data.faithfulness + '</span>'));
-    termBody.appendChild(line(mark + ' <span class="term-val">Uptime: ' + fmtUptime() + '</span>'));
+    termBody.appendChild(line(mark + ' <span class="term-val">Running since Feb 2026: ' + fmtHours(totalRuntimeHours()) + ' total</span>'));
+    var session = fmtHours(data.uptime_hours);
+    termBody.appendChild(line(
+      session
+        ? mark + ' <span class="term-val">Current session: ' + session + ' since last boot</span>'
+        : '<span class="term-warn">▸</span> <span class="term-dim">Current session: unknown while offline</span>'
+    ));
     if (!isLive) {
       termBody.appendChild(line('<span class="term-dim"># live endpoint unreachable — showing last-known state</span>'));
     }
@@ -351,15 +403,58 @@ a { color: inherit; text-decoration: none; }
       .catch(showSnapshot);
   }
 
+  /* ---- Changelog: what each restart actually bought ----
+     Lives in changelog.json next to this page, so a developer agent can
+     append an entry in the same commit as the change it describes. The
+     "since last upgrade" figure is derived from the newest entry, which
+     makes it true by construction rather than by a hardcoded date. */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderChangelog(entries) {
+    if (!entries || !entries.length) return;
+
+    var newest = new Date(entries[0].date + 'T12:00:00');
+    if (!isNaN(newest)) {
+      var h = Math.max(0, Math.floor((Date.now() - newest.getTime()) / 3600000));
+      $('stSession').innerHTML = withUnits(fmtHours(h));
+    }
+
+    var html = entries.slice(0, 4).map(function (e) {
+      var rows = [['what', e.what], ['why', e.why], ['value', e.value]]
+        .filter(function (r) { return r[1]; })
+        .map(function (r) {
+          return '<p class="cl-row"><b>' + r[0] + '</b>' + esc(r[1]) + '</p>';
+        }).join('');
+      return '<div class="cl-item">' +
+        '<div class="cl-top">' +
+          '<span class="cl-title">' + esc(e.title) + '</span>' +
+          (e.scope ? '<span class="cl-scope" data-scope="' + esc(e.scope) + '">' + esc(e.scope) + '</span>' : '') +
+          '<span class="cl-date">' + esc(e.date) + '</span>' +
+        '</div>' + rows +
+      '</div>';
+    }).join('');
+
+    $('clList').innerHTML = html;
+    $('changelog').hidden = false;
+  }
+
+  fetch('changelog.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) { renderChangelog(d.entries); })
+    .catch(function () { /* no changelog yet — the section just stays hidden */ });
+
   poll();
   setInterval(poll, POLL_MS);
-  /* keep the uptime ticking between polls */
+
+  /* Total runtime is derived from the clock, so tick it between polls.
+     Only that one tile — re-rendering everything here would clobber the
+     live values (memory, session) with stale scraped text. */
   setInterval(function () {
-    if (termBody.children.length > 1) {
-      renderStats(live ? { agents: $('stAgents').textContent, models_loaded: $('stModels').textContent,
-        faithfulness: $('stFaith').textContent, collections: $('stCollections').textContent,
-        memory_used_gb: null } : SNAPSHOT);
-    }
+    $('stRuntime').innerHTML = withUnits(fmtHours(totalRuntimeHours()));
   }, 60000);
 })();
 </script>

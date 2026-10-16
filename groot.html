@@ -316,7 +316,7 @@ code {
   <div class="container reveal">
     <div class="section-label">02 · Architecture</div>
     <h2>One supervisor, five specialists</h2>
-    <p>Every request enters through <strong>Groot</strong>, a supervisor agent built on <strong>LangGraph</strong> that classifies intent and routes to a specialist. Each agent runs a model chosen for its task — and for its memory footprint, since all seven models share 16GB of RAM through <strong>Ollama</strong> on CPU only.</p>
+    <p>Every request enters through <strong>Groot</strong>, a supervisor agent built on <strong>LangGraph</strong> that classifies intent and routes to a specialist. Each agent runs a model chosen for its task — and for its memory footprint, since all <span data-groot="models">7</span> models share 16GB of RAM through <strong>Ollama</strong> on CPU only.</p>
     <div class="arch">
       <div class="arch-row head">
         <div class="arch-cell">Agent</div>
@@ -387,16 +387,16 @@ code {
 <section id="constraints">
   <div class="container reveal">
     <div class="section-label">04 · Constraint Engineering</div>
-    <h2>27GB of models, 16GB of RAM, zero GPUs</h2>
-    <p>The seven models total <strong>27GB on disk</strong> — they can't all be resident at once. Groot treats model residency as a scheduling problem: keep the supervisor's router model warm for latency, load specialists on demand, and evict by least-recently-used when memory pressure rises.</p>
+    <h2><span data-groot="models-gb">27</span>GB of models, 16GB of RAM, zero GPUs</h2>
+    <p>The <span data-groot="models">7</span> models total <strong><span data-groot="models-gb">27</span>GB on disk</strong> — they can't all be resident at once. Groot treats model residency as a scheduling problem: keep the supervisor's router model warm for latency, load specialists on demand, and evict by least-recently-used when memory pressure rises.</p>
     <ul class="list">
       <li><strong>Thermal-aware load scheduling</strong> — a fanless-adjacent mini PC throttles under sustained load, so heavy jobs (deepseek-r1:14b inference, embedding backfills) are queued and scheduled instead of run on demand.</li>
       <li><strong>CPU-only inference</strong> — quantized GGUF models via Ollama; picking the right quant per model was a measured tradeoff between quality and tokens/sec.</li>
       <li><strong>Everything survives a reboot</strong> — systemd units bring up Ollama, the agent graph, and integrations in order; the box is headless and administered over <strong>Tailscale</strong>.</li>
     </ul>
     <div class="stat-strip">
-      <div class="stat-card"><div class="stat-value">7</div><div class="stat-label">Models sharing RAM</div></div>
-      <div class="stat-card"><div class="stat-value">27GB</div><div class="stat-label">On disk</div></div>
+      <div class="stat-card"><div class="stat-value"><span data-groot="models">7</span></div><div class="stat-label">Models sharing RAM</div></div>
+      <div class="stat-card"><div class="stat-value"><span data-groot="models-gb">27</span>GB</div><div class="stat-label">On disk</div></div>
       <div class="stat-card"><div class="stat-value">16GB</div><div class="stat-label">Physical RAM</div></div>
       <div class="stat-card"><div class="stat-value">$0</div><div class="stat-label">Monthly inference</div></div>
     </div>

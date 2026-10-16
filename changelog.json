@@ -1,0 +1,47 @@
+{
+  "_schema": {
+    "note": "Newest entry first. live.html reads entries[0].date to show 'since last upgrade', and renders the most recent few. Keep it honest: only things that actually shipped.",
+    "fields": {
+      "date": "YYYY-MM-DD, the day it shipped (merged/deployed, not started)",
+      "scope": "groot | portfolio | infra",
+      "title": "short imperative phrase, no trailing period",
+      "what": "what actually changed, concretely",
+      "why": "the problem it solved — the interesting part",
+      "value": "what it bought: a number, a risk removed, or time saved"
+    }
+  },
+  "entries": [
+    {
+      "date": "2026-10-16",
+      "scope": "groot",
+      "title": "Cover the dashboard's core flows with end-to-end tests in CI",
+      "what": "Added 7 Playwright tests in TypeScript against Chromium — overview load, a streamed chat reply, a job-tracker status change and the API 500 state among them — with the backend mocked through page.route() network fixtures. Runs as a 'Playwright E2E' job in GitHub Actions on every pull request.",
+      "why": "The dashboard was only ever exercised by hand against a live backend, so a broken chat stream or a mishandled error state reached the running box before anyone noticed.",
+      "value": "7/7 passing in CI. Regressions in those flows now surface on the pull request instead of on the machine that is serving them."
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "groot",
+      "title": "Move the dashboard's chat and job-tracker pages to strict TypeScript",
+      "what": "Migrated the chat page, the job-tracker (Approvals) page and the API client to TypeScript with strict: true, using allowJs so the rest of the dashboard keeps working and migrates incrementally. API responses now have typed models. Added a 'Typecheck & build' job in GitHub Actions.",
+      "why": "The API client passed untyped objects around, so a field renamed on the backend showed up only as an undefined at runtime, in the browser, after deploy.",
+      "value": "Type errors fail the build instead of surfacing as a blank panel. Two pages are TypeScript so far — allowJs keeps the remainder running while they follow."
+    },
+    {
+      "date": "2026-10-16",
+      "scope": "portfolio",
+      "title": "Report real session uptime instead of a derived number",
+      "what": "The live status page fetched uptime_hours from the Groot status API and then ignored it, deriving a figure from a hardcoded epoch. Split into two labelled values: total runtime since Feb 2026, computed locally, and current session read from the API.",
+      "why": "The page showed ~2808h while the machine itself reported 506h, and called the result 'uptime' even though the box restarts for upgrades. Two pages of the same site disagreed.",
+      "value": "The number on the page is now the number on the machine. Also surfaced memory usage, which the API already returned but nothing displayed, and fixed a ticker that was wiping live values between polls."
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "portfolio",
+      "title": "Rebuild the portfolio around full-stack AI positioning",
+      "what": "Repositioned the site as Full-Stack AI & Data Engineer, added BenefitPilot, RailSim, Brainvita and Credit Risk XAI, a one-page resume with its own landing page, a Credentials section for the IEEE paper and certifications, and a working contact form.",
+      "why": "The site still described a Data Engineer and was missing eight months of work, three degrees' worth of detail, and any way to get in touch that did not publish a phone number.",
+      "value": "Every project now has a card with real metrics, and the resume is generated from structured data rather than hand-edited, so it cannot drift from the site."
+    }
+  ]
+}
