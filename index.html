@@ -608,6 +608,45 @@ section { padding: 80px 0; }
 }
 .project-card:hover .stack-pill { border-color: var(--border); color: var(--text); }
 
+/* Metrics strip — used on the featured card to give it the weight it deserves */
+.project-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 16px 0;
+  margin-top: 2px;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+.pm-v {
+  display: block;
+  font-family: var(--mono);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--green);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.project-metrics > div:nth-child(2) .pm-v { color: var(--primary); }
+.project-metrics > div:nth-child(3) .pm-v { color: var(--secondary); }
+.project-metrics > div:nth-child(4) .pm-v { color: var(--primary); }
+.pm-l {
+  display: block;
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.project-hint {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+  margin-top: -2px;
+}
+.project-hint .accent { color: var(--primary); }
+@media (max-width: 560px) {
+  .project-metrics { grid-template-columns: repeat(2, 1fr); }
+}
+
 /* ============ SKILLS ============ */
 .skills-grid {
   display: grid;
@@ -1317,13 +1356,23 @@ section { padding: 80px 0; }
           <span class="project-link">↗</span>
         </div>
         <div class="project-name">Groot Multi-Agent System</div>
-        <p class="project-desc">Self-hosted 6-agent AI system with hybrid RAG, guardrails, and Ragas evals — orchestrated by LangGraph, served by Ollama, reachable over Slack and Telegram. Running 24/7 on bare metal.</p>
+        <p class="project-desc">A self-hosted AI platform running 24/7 on a Lenovo M720Q — no GPU, no cloud bill. A LangGraph supervisor routes every request to one of five specialists, each on a model picked to fit CPU-only inference and a 16GB memory budget. Retrieval is hybrid BM25 + dense across six access-controlled ChromaDB collections, guardrails validate every output before it leaves, and an asyncio scheduler checks free RAM before each inference so the box never OOMs.</p>
+        <div class="project-metrics">
+          <div><span class="pm-v">1.000</span><span class="pm-l">Ragas faithfulness</span></div>
+          <div><span class="pm-v">0.84</span><span class="pm-l">Ragas overall</span></div>
+          <div><span class="pm-v">7</span><span class="pm-l">models · 27GB</span></div>
+          <div><span class="pm-v">24/7</span><span class="pm-l">on bare metal</span></div>
+        </div>
+        <p class="project-hint">Four Docker services under systemd · React dashboard · Slack, Telegram and n8n as front doors · <span class="accent">full case study on the site</span></p>
         <div class="project-stack">
           <span class="stack-pill">LangGraph</span>
+          <span class="stack-pill">FastAPI</span>
+          <span class="stack-pill">React</span>
           <span class="stack-pill">Ollama</span>
           <span class="stack-pill">ChromaDB</span>
           <span class="stack-pill">guardrails-ai</span>
           <span class="stack-pill">Ragas</span>
+          <span class="stack-pill">Docker</span>
           <span class="stack-pill">n8n</span>
         </div>
       </a>
