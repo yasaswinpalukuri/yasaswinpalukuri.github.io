@@ -1,0 +1,31 @@
+{
+  "_schema": {
+    "note": "Newest entry first. live.html reads entries[0].date to show 'since last upgrade', and renders the most recent few. Keep it honest: only things that actually shipped.",
+    "fields": {
+      "date": "YYYY-MM-DD, the day it shipped (merged/deployed, not started)",
+      "scope": "groot | portfolio | infra",
+      "title": "short imperative phrase, no trailing period",
+      "what": "what actually changed, concretely",
+      "why": "the problem it solved — the interesting part",
+      "value": "what it bought: a number, a risk removed, or time saved"
+    }
+  },
+  "entries": [
+    {
+      "date": "2026-10-16",
+      "scope": "portfolio",
+      "title": "Report real session uptime instead of a derived number",
+      "what": "The live status page fetched uptime_hours from the Groot status API and then ignored it, deriving a figure from a hardcoded epoch. Split into two labelled values: total runtime since Feb 2026, computed locally, and current session read from the API.",
+      "why": "The page showed ~2808h while the machine itself reported 506h, and called the result 'uptime' even though the box restarts for upgrades. Two pages of the same site disagreed.",
+      "value": "The number on the page is now the number on the machine. Also surfaced memory usage, which the API already returned but nothing displayed, and fixed a ticker that was wiping live values between polls."
+    },
+    {
+      "date": "2026-10-15",
+      "scope": "portfolio",
+      "title": "Rebuild the portfolio around full-stack AI positioning",
+      "what": "Repositioned the site as Full-Stack AI & Data Engineer, added BenefitPilot, RailSim, Brainvita and Credit Risk XAI, a one-page resume with its own landing page, a Credentials section for the IEEE paper and certifications, and a working contact form.",
+      "why": "The site still described a Data Engineer and was missing eight months of work, three degrees' worth of detail, and any way to get in touch that did not publish a phone number.",
+      "value": "Every project now has a card with real metrics, and the resume is generated from structured data rather than hand-edited, so it cannot drift from the site."
+    }
+  ]
+}

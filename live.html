@@ -171,6 +171,33 @@ a { color: inherit; text-decoration: none; }
 .stat-card:nth-child(3) .stat-value { color: var(--green); }
 .stat-card:nth-child(5) .stat-value { color: var(--secondary); }
 
+/* ===== CHANGELOG ===== */
+.changelog { margin: 8px 0 48px; }
+.cl-head { font-size: clamp(22px, 3vw, 28px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; }
+.cl-sub { color: var(--muted); font-size: 14px; margin-bottom: 26px; }
+.cl-item {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  transition: border-color 0.25s;
+}
+.cl-item:hover { border-color: rgba(88, 166, 255, 0.4); }
+.cl-top { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.cl-date { font-family: var(--mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.cl-scope {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 100px;
+  color: var(--secondary); background: rgba(188, 140, 255, 0.12);
+  border: 1px solid rgba(188, 140, 255, 0.3);
+}
+.cl-scope[data-scope="groot"] { color: var(--green); background: rgba(63, 185, 80, 0.12); border-color: rgba(63, 185, 80, 0.3); }
+.cl-scope[data-scope="infra"] { color: var(--primary); background: rgba(88, 166, 255, 0.12); border-color: rgba(88, 166, 255, 0.3); }
+.cl-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; flex: 1 1 auto; min-width: 200px; }
+.cl-row { font-size: 13.5px; color: var(--muted); margin-top: 7px; line-height: 1.65; }
+.cl-row b { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; margin-right: 8px; }
+
 .last-updated {
   text-align: center;
   font-family: var(--mono);
@@ -237,9 +264,15 @@ a { color: inherit; text-decoration: none; }
     <div class="stat-card"><div class="stat-value" id="stFaith">–</div><div class="stat-label">Ragas Faithfulness</div></div>
     <div class="stat-card"><div class="stat-value" id="stCollections">–</div><div class="stat-label">ChromaDB Collections</div></div>
     <div class="stat-card"><div class="stat-value" id="stRuntime">–</div><div class="stat-label">Total runtime · since Feb 2026</div></div>
-    <div class="stat-card"><div class="stat-value" id="stSession">–</div><div class="stat-label">Current session · since last boot</div></div>
+    <div class="stat-card"><div class="stat-value" id="stSession">–</div><div class="stat-label">Since last upgrade</div></div>
     <div class="stat-card"><div class="stat-value" id="stMem">–</div><div class="stat-label">Memory In Use</div></div>
   </div>
+
+  <section class="changelog" id="changelog" hidden>
+    <h2 class="cl-head">What changed recently</h2>
+    <p class="cl-sub">Groot restarts because it gets upgraded. Here is what each restart bought.</p>
+    <div id="clList"></div>
+  </section>
 
   <p class="last-updated" id="lastUpdated"></p>
 </main>
@@ -316,8 +349,6 @@ a { color: inherit; text-decoration: none; }
     $('stFaith').textContent = data.faithfulness != null ? data.faithfulness : '–';
     $('stCollections').textContent = data.collections != null ? data.collections : '–';
     $('stRuntime').innerHTML = withUnits(fmtHours(totalRuntimeHours()));
-    /* Only the live endpoint knows the current session; never guess it. */
-    $('stSession').innerHTML = withUnits(fmtHours(data.uptime_hours));
     $('stMem').textContent = data.memory_used_gb != null ? data.memory_used_gb + 'GB' : '–';
   }
 
@@ -371,6 +402,50 @@ a { color: inherit; text-decoration: none; }
       })
       .catch(showSnapshot);
   }
+
+  /* ---- Changelog: what each restart actually bought ----
+     Lives in changelog.json next to this page, so a developer agent can
+     append an entry in the same commit as the change it describes. The
+     "since last upgrade" figure is derived from the newest entry, which
+     makes it true by construction rather than by a hardcoded date. */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderChangelog(entries) {
+    if (!entries || !entries.length) return;
+
+    var newest = new Date(entries[0].date + 'T12:00:00');
+    if (!isNaN(newest)) {
+      var h = Math.max(0, Math.floor((Date.now() - newest.getTime()) / 3600000));
+      $('stSession').innerHTML = withUnits(fmtHours(h));
+    }
+
+    var html = entries.slice(0, 4).map(function (e) {
+      var rows = [['what', e.what], ['why', e.why], ['value', e.value]]
+        .filter(function (r) { return r[1]; })
+        .map(function (r) {
+          return '<p class="cl-row"><b>' + r[0] + '</b>' + esc(r[1]) + '</p>';
+        }).join('');
+      return '<div class="cl-item">' +
+        '<div class="cl-top">' +
+          '<span class="cl-title">' + esc(e.title) + '</span>' +
+          (e.scope ? '<span class="cl-scope" data-scope="' + esc(e.scope) + '">' + esc(e.scope) + '</span>' : '') +
+          '<span class="cl-date">' + esc(e.date) + '</span>' +
+        '</div>' + rows +
+      '</div>';
+    }).join('');
+
+    $('clList').innerHTML = html;
+    $('changelog').hidden = false;
+  }
+
+  fetch('changelog.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (d) { renderChangelog(d.entries); })
+    .catch(function () { /* no changelog yet — the section just stays hidden */ });
 
   poll();
   setInterval(poll, POLL_MS);
