@@ -236,7 +236,8 @@ a { color: inherit; text-decoration: none; }
     <div class="stat-card"><div class="stat-value" id="stModels">–</div><div class="stat-label">Models Loaded</div></div>
     <div class="stat-card"><div class="stat-value" id="stFaith">–</div><div class="stat-label">Ragas Faithfulness</div></div>
     <div class="stat-card"><div class="stat-value" id="stCollections">–</div><div class="stat-label">ChromaDB Collections</div></div>
-    <div class="stat-card"><div class="stat-value" id="stUptime">–</div><div class="stat-label">Uptime</div></div>
+    <div class="stat-card"><div class="stat-value" id="stRuntime">–</div><div class="stat-label">Total runtime · since Feb 2026</div></div>
+    <div class="stat-card"><div class="stat-value" id="stSession">–</div><div class="stat-label">Current session · since last boot</div></div>
     <div class="stat-card"><div class="stat-value" id="stMem">–</div><div class="stat-label">Memory In Use</div></div>
   </div>
 
@@ -257,14 +258,20 @@ a { color: inherit; text-decoration: none; }
   'use strict';
 
   /* ================= CONFIG =================
-     Set STATUS_ENDPOINT to the public URL of the status API running on the
-     M720Q (see groot-status-api.py — expose it with Tailscale Funnel or a
-     Cloudflare Tunnel). While it is empty, the page shows the last-known
-     snapshot below and is honest about being offline. Keep GROOT_EPOCH in
-     sync with the one in index.html. */
-  var STATUS_ENDPOINT = 'https://groot.tailc6acbd.ts.net/status';            // e.g. 'https://groot.your-tailnet.ts.net/status'
+     STATUS_ENDPOINT is the public URL of the status API running on the M720Q
+     (see groot-status-api.py — exposed with Tailscale Funnel). While it is
+     empty or unreachable, the page falls back to the snapshot below and says
+     so plainly.
+
+     Two different numbers, deliberately kept apart:
+       - Total runtime  : wall-clock since RUNTIME_START. Groot has restarted
+                          in that window, so this is NOT uptime.
+       - Current session: hours since the machine last booted, read live from
+                          the API (`uptime_hours`). Resets on every reboot.
+     RUNTIME_START must match the start date used by the stats-sync job. */
+  var STATUS_ENDPOINT = 'https://groot.tailc6acbd.ts.net/status';
   var POLL_MS = 30000;
-  var GROOT_EPOCH = new Date('2026-06-21T09:00:00-04:00');
+  var RUNTIME_START = new Date('2026-02-02T00:00:00-05:00');
 
   /* Last-known snapshot, used when the endpoint is unreachable or not yet
      configured. Update occasionally so the fallback stays truthful. */
@@ -282,14 +289,20 @@ a { color: inherit; text-decoration: none; }
   var termBody = $('termBody');
   var live = false;
 
-  function uptimeHours() {
-    return Math.max(0, Math.floor((Date.now() - GROOT_EPOCH.getTime()) / 3600000));
+  /* Total runtime is computed locally, so it stays correct even when the
+     box is unreachable. */
+  function totalRuntimeHours() {
+    return Math.max(0, Math.floor((Date.now() - RUNTIME_START.getTime()) / 3600000));
   }
 
-  function fmtUptime() {
-    var h = uptimeHours();
+  function fmtHours(h) {
+    if (h == null || isNaN(h)) return null;
     var d = Math.floor(h / 24);
     return d > 0 ? d + 'd ' + (h % 24) + 'h' : h + 'h';
+  }
+
+  function withUnits(s) {
+    return s == null ? '–' : s.replace(/([dh])/g, '<span class="unit">$1</span>');
   }
 
   function setBadge(state, text) {
@@ -302,7 +315,9 @@ a { color: inherit; text-decoration: none; }
     $('stModels').textContent = data.models_loaded != null ? data.models_loaded : '–';
     $('stFaith').textContent = data.faithfulness != null ? data.faithfulness : '–';
     $('stCollections').textContent = data.collections != null ? data.collections : '–';
-    $('stUptime').innerHTML = fmtUptime().replace(/([dh])/g, '<span class="unit">$1</span>');
+    $('stRuntime').innerHTML = withUnits(fmtHours(totalRuntimeHours()));
+    /* Only the live endpoint knows the current session; never guess it. */
+    $('stSession').innerHTML = withUnits(fmtHours(data.uptime_hours));
     $('stMem').textContent = data.memory_used_gb != null ? data.memory_used_gb + 'GB' : '–';
   }
 
@@ -320,7 +335,13 @@ a { color: inherit; text-decoration: none; }
     termBody.appendChild(line(mark + ' <span class="term-val">' + data.models_loaded + ' models loaded (' + data.models_disk_gb + 'GB)</span>'));
     termBody.appendChild(line(mark + ' <span class="term-val">' + data.collections + ' ChromaDB collections</span>'));
     termBody.appendChild(line(mark + ' <span class="term-val">Ragas faithfulness: ' + data.faithfulness + '</span>'));
-    termBody.appendChild(line(mark + ' <span class="term-val">Uptime: ' + fmtUptime() + '</span>'));
+    termBody.appendChild(line(mark + ' <span class="term-val">Running since Feb 2026: ' + fmtHours(totalRuntimeHours()) + ' total</span>'));
+    var session = fmtHours(data.uptime_hours);
+    termBody.appendChild(line(
+      session
+        ? mark + ' <span class="term-val">Current session: ' + session + ' since last boot</span>'
+        : '<span class="term-warn">▸</span> <span class="term-dim">Current session: unknown while offline</span>'
+    ));
     if (!isLive) {
       termBody.appendChild(line('<span class="term-dim"># live endpoint unreachable — showing last-known state</span>'));
     }
@@ -353,13 +374,12 @@ a { color: inherit; text-decoration: none; }
 
   poll();
   setInterval(poll, POLL_MS);
-  /* keep the uptime ticking between polls */
+
+  /* Total runtime is derived from the clock, so tick it between polls.
+     Only that one tile — re-rendering everything here would clobber the
+     live values (memory, session) with stale scraped text. */
   setInterval(function () {
-    if (termBody.children.length > 1) {
-      renderStats(live ? { agents: $('stAgents').textContent, models_loaded: $('stModels').textContent,
-        faithfulness: $('stFaith').textContent, collections: $('stCollections').textContent,
-        memory_used_gb: null } : SNAPSHOT);
-    }
+    $('stRuntime').innerHTML = withUnits(fmtHours(totalRuntimeHours()));
   }, 60000);
 })();
 </script>
