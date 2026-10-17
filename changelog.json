@@ -6,16 +6,24 @@
       "scope": "groot | portfolio | infra",
       "title": "short imperative phrase, no trailing period",
       "what": "what actually changed, concretely",
-      "why": "the problem it solved — the interesting part",
+      "why": "the problem it solved \u2014 the interesting part",
       "value": "what it bought: a number, a risk removed, or time saved"
     }
   },
   "entries": [
     {
+      "date": "2026-10-17",
+      "scope": "infra",
+      "title": "Replace the uptime cron with a stats sync that cannot silently drift",
+      "what": "Rewrote the daily job on the M720Q as groot-sync.py: it computes total runtime from a fixed 2026-02-02 start instead of adding 24 each night, reads agent model count, model disk size and collection count from /status, and writes them into data-groot=\"...\" spans across every *.html in the site repo \u2014 18 marked elements across index.html and groot.html. Also fixed groot-status-api.py, which counted all 10 models installed on the box (39GB) rather than the 7 the agents use (36GB), by adding an AGENT_MODELS allowlist and returning agent_models / agent_models_gb alongside the host totals.",
+      "why": "The old job matched prose like \"Uptime: 6125 hours\", so any copy edit would break the match, leave the job exiting 0 having found nothing, and freeze the number on a page recruiters read. It incremented rather than computed, so one missed run undercounted forever. Four figures were hardcoded across six places with nothing keeping them in sync, and the model count on the live page already disagreed with the main page.",
+      "value": "Runtime is self-correcting \u2014 a missed day fixes itself on the next run. The job exits non-zero if any value finds zero matching elements, so a silent freeze is now a loud failure instead of a stale page. Copy can be reworded freely without breaking the sync."
+    },
+    {
       "date": "2026-10-16",
       "scope": "groot",
       "title": "Cover the dashboard's core flows with end-to-end tests in CI",
-      "what": "Added 7 Playwright tests in TypeScript against Chromium — overview load, a streamed chat reply, a job-tracker status change and the API 500 state among them — with the backend mocked through page.route() network fixtures. Runs as a 'Playwright E2E' job in GitHub Actions on every pull request.",
+      "what": "Added 7 Playwright tests in TypeScript against Chromium \u2014 overview load, a streamed chat reply, a job-tracker status change and the API 500 state among them \u2014 with the backend mocked through page.route() network fixtures. Runs as a 'Playwright E2E' job in GitHub Actions on every pull request.",
       "why": "The dashboard was only ever exercised by hand against a live backend, so a broken chat stream or a mishandled error state reached the running box before anyone noticed.",
       "value": "7/7 passing in CI. Regressions in those flows now surface on the pull request instead of on the machine that is serving them."
     },
@@ -25,7 +33,7 @@
       "title": "Move the dashboard's chat and job-tracker pages to strict TypeScript",
       "what": "Migrated the chat page, the job-tracker (Approvals) page and the API client to TypeScript with strict: true, using allowJs so the rest of the dashboard keeps working and migrates incrementally. API responses now have typed models. Added a 'Typecheck & build' job in GitHub Actions.",
       "why": "The API client passed untyped objects around, so a field renamed on the backend showed up only as an undefined at runtime, in the browser, after deploy.",
-      "value": "Type errors fail the build instead of surfacing as a blank panel. Two pages are TypeScript so far — allowJs keeps the remainder running while they follow."
+      "value": "Type errors fail the build instead of surfacing as a blank panel. Two pages are TypeScript so far \u2014 allowJs keeps the remainder running while they follow."
     },
     {
       "date": "2026-10-16",
