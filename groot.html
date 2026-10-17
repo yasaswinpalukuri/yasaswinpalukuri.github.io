@@ -387,8 +387,8 @@ code {
 <section id="constraints">
   <div class="container reveal">
     <div class="section-label">04 · Constraint Engineering</div>
-    <h2><span data-groot="models-gb">27</span>GB of models, 16GB of RAM, zero GPUs</h2>
-    <p>The <span data-groot="models">7</span> models total <strong><span data-groot="models-gb">27</span>GB on disk</strong> — they can't all be resident at once. Groot treats model residency as a scheduling problem: keep the supervisor's router model warm for latency, load specialists on demand, and evict by least-recently-used when memory pressure rises.</p>
+    <h2><span data-groot="models-gb">36</span>GB of models, 16GB of RAM, zero GPUs</h2>
+    <p>The <span data-groot="models">7</span> models total <strong><span data-groot="models-gb">36</span>GB on disk</strong> — they can't all be resident at once. Groot treats model residency as a scheduling problem: keep the supervisor's router model warm for latency, load specialists on demand, and evict by least-recently-used when memory pressure rises.</p>
     <ul class="list">
       <li><strong>Thermal-aware load scheduling</strong> — a fanless-adjacent mini PC throttles under sustained load, so heavy jobs (deepseek-r1:14b inference, embedding backfills) are queued and scheduled instead of run on demand.</li>
       <li><strong>CPU-only inference</strong> — quantized GGUF models via Ollama; picking the right quant per model was a measured tradeoff between quality and tokens/sec.</li>
@@ -396,7 +396,7 @@ code {
     </ul>
     <div class="stat-strip">
       <div class="stat-card"><div class="stat-value"><span data-groot="models">7</span></div><div class="stat-label">Models sharing RAM</div></div>
-      <div class="stat-card"><div class="stat-value"><span data-groot="models-gb">27</span>GB</div><div class="stat-label">On disk</div></div>
+      <div class="stat-card"><div class="stat-value"><span data-groot="models-gb">36</span>GB</div><div class="stat-label">On disk</div></div>
       <div class="stat-card"><div class="stat-value">16GB</div><div class="stat-label">Physical RAM</div></div>
       <div class="stat-card"><div class="stat-value">$0</div><div class="stat-label">Monthly inference</div></div>
     </div>
